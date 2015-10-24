@@ -3,7 +3,13 @@
             [om.dom :as dom :include-macros true]
             [cuerdas.core :as str]
             [com.rpl.specter :as s]
+            [devtools.core :as devtools]
             ))
+
+(devtools/set-pref! :install-sanity-hints true) ; this is optional
+(devtools/install!)
+
+;(.log js/console (range 200))
 
 (enable-console-print!)
 
@@ -89,11 +95,17 @@
 
 ;; TODO need a tree database
 
-(def treedatabase {"Shops" {"shop0001" {"veh0001" {"job0001" {}}}}}
+(def treedatabase {"Shops"
+                   {"shop0001"
+                    {"veh0001"
+                     {"job0001"
+                      {:path "/Shops/shop0001/veh0001/job0001"}}}}}
   )
+(.log js/console treedatabase)
 
-(println "treedatabase:" treedatabase)
+;(pprint "treedatabase:" treedatabase)
 (println (s/select [(s/keypath "Shops")(s/keypath "shop0001")] treedatabase))
+(.log js/console (s/select [(s/keypath "Shops")(s/keypath "shop0001")] treedatabase))
 
 ;(println (process-working-data
 ; {}
@@ -114,9 +126,6 @@
 ;                   {"Shops" {}}
 ;                   {}
 ;                   ))
-
-
-
 
 ;(.log js/console (str "Hey Seymore! what is goin' on? " (js/Date.)))
 

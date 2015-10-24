@@ -11,7 +11,7 @@
                  [org.omcljs/om "0.9.0"]
                  [com.rpl/specter "0.7.1"]
                  [funcool/cuerdas "0.6.0"]
-
+                 [binaryage/devtools "0.4.0"]
                  ]
 
   :plugins [[lein-cljsbuild "1.1.0"]
