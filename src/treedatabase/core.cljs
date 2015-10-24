@@ -93,7 +93,8 @@
     )
   )
 
-;; TODO need a tree database
+;; TODO need a tree database, this is a start
+;; TODO can we build it using process-working-data
 
 (def treedatabase {"Shops"
                    {"shop0001"
@@ -105,7 +106,7 @@
 
 ;(pprint "treedatabase:" treedatabase)
 (println (s/select [(s/keypath "Shops")(s/keypath "shop0001")] treedatabase))
-(.log js/console (s/select [(s/keypath "Shops")(s/keypath "shop0001")] treedatabase))
+;(.log js/console (s/select [(s/keypath "Shops")(s/keypath "shop0001")] treedatabase))
 
 ;(println (process-working-data
 ; {}
