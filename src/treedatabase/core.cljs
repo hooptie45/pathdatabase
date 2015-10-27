@@ -6,7 +6,7 @@
             [devtools.core :as devtools]
             ))
 
-(devtools/set-pref! :install-sanity-hints true) ; this is optional
+(devtools/set-pref! :install-sanity-hints true)             ; this is optional
 (devtools/install!)
 
 ;(.log js/console (range 200))
@@ -22,7 +22,7 @@
 (defn length>0 [string]
   (> (.-length string) 0))
 
-(defn split-path[path]
+(defn split-path [path]
   (rest (str/split path #"/")))
 
 ;(println "split-path:" (split-path "/Shops/shop0001/veh0001/job0001"))
@@ -72,26 +72,52 @@
   (merge current-node new-data)
   )
 
-(defn insert-map-into-db[current-state map]
-  (let [path (:path map)
-        list-of-path-segments (split-path path)
-        path-segment list-of-path-segments
-        ;_ (println "list-of-path-segments:" list-of-path-segments)
-        ;_ (println "*" (first list-of-path-segments) "*")
-        ;last-segment (last list-of-path-segments)
-        new-state (update-in current-state path-segment merge-nodes map)
-        ]
-    new-state
+(defn insert-map-into-db [current-state map]
+  (println "insert-map-into-db->map:" map)
+  (if map
+    (let [path (:path map)
+          list-of-path-segments (split-path path)
+          path-segment list-of-path-segments
+          ;_ (println "list-of-path-segments:" list-of-path-segments)
+          ;last-segment (last list-of-path-segments)
+          new-state (update-in current-state path-segment merge-nodes map)
+          ]
+      new-state
+      )
+    current-state
     )
   )
 
-(def tree-database (insert-map-into-db {} {:path "/Shops/shop0001/cust0001/veh0001/job0001" :job-id "job0001"}))
-(def tree-database2 (insert-map-into-db tree-database  {:path "/Shops/shop0001/cust0001/veh0001/job0002" :job-id "job0002"}))
-(def tree-database3 (insert-map-into-db tree-database2 {:path "/Shops/shop0001/cust0001/veh0001" :make "Ford"}))
-(def tree-database4 (insert-map-into-db tree-database3 {:path "/Shops/shop0001/cust0001/veh0002" :make "VW"}))
-(println "tree-database4:" tree-database4)
-(.log js/console tree-database4)
-(println (s/select [(s/keypath "Shops")(s/keypath "shop0001")] tree-database4))
+(defn insert-rows-into-db [current-state rows]
+  ;(println "current-state:" current-state "rows:" rows)
+  (loop [db current-state
+         rows rows]
+    (let [row (first rows)
+          ;_ (println "rows:" rows)
+          new-state (insert-map-into-db db row)
+          ]
+      (if (empty? rows)
+        new-state
+        (recur new-state (rest rows))
+        )
+      )
+    )
+  )
+
+(def test-data [{:path "/Shops/shop0001/cust0001/veh0001/job0001" :job-id "job0001"}
+                {:path "/Shops/shop0001/cust0001/veh0001/job0002" :job-id "job0002"}
+                {:path "/Shops/shop0001/cust0001" :last-name "Stang" :first-name "Mark"}
+                {:path "/Shops/shop0001/cust0001/veh0001" :make "Ford"}
+                {:path "/Shops/shop0001/cust0001/veh0002" :make "VW"}
+                ])
+
+(def results (insert-rows-into-db {} test-data))
+(println "insert-rows-into-db:" results)
+;(.log js/console (insert-rows-into-db {} test-data))
+;(println (s/select [(s/keypath "Shops")(s/keypath "shop0001")(s/keypath "cust0001")] (insert-rows-into-db {} test-data)))
+(println "count:" (count results))
+(println "first:" (first results))
+(println "rest:" (rest results))
 
 
 ;; TODO this should be passed a list of maps
