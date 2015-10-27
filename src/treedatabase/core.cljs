@@ -73,7 +73,7 @@
   )
 
 (defn insert-map-into-db [current-state map]
-  (println "insert-map-into-db->map:" map)
+  ;(println "insert-map-into-db->map:" map)
   (if map
     (let [path (:path map)
           list-of-path-segments (split-path path)
@@ -111,13 +111,14 @@
                 {:path "/Shops/shop0001/cust0001/veh0002" :make "VW"}
                 ])
 
+;; TODO we need something other than an empty map to start with
 (def results (insert-rows-into-db {} test-data))
 (println "insert-rows-into-db:" results)
 ;(.log js/console (insert-rows-into-db {} test-data))
-;(println (s/select [(s/keypath "Shops")(s/keypath "shop0001")(s/keypath "cust0001")] (insert-rows-into-db {} test-data)))
-(println "count:" (count results))
-(println "first:" (first results))
-(println "rest:" (rest results))
+;(println (s/select [(s/keypath "Shops")(s/keypath "shop0001")(s/keypath "cust0001")] results))
+;(println "count:" (count results))
+;(println "first:" (first results))
+;(println "rest:" (rest results))
 
 
 ;; TODO this should be passed a list of maps
