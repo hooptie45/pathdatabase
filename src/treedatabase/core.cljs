@@ -22,6 +22,11 @@
 (defn length>0 [string]
   (> (.-length string) 0))
 
+(defn split-path[path]
+  (rest (str/split path #"/")))
+
+;(println "split-path:" (split-path "/Shops/shop0001/veh0001/job0001"))
+
 (defn list-of-path-segments [paths]
   (map #(filter length>0 %) (map #(str/split % #"/") paths)))
 
@@ -67,6 +72,28 @@
   (merge current-node new-data)
   )
 
+(defn insert-map-into-db[current-state map]
+  (let [path (:path map)
+        list-of-path-segments (split-path path)
+        path-segment list-of-path-segments
+        ;_ (println "list-of-path-segments:" list-of-path-segments)
+        ;_ (println "*" (first list-of-path-segments) "*")
+        ;last-segment (last list-of-path-segments)
+        new-state (update-in current-state path-segment merge-nodes map)
+        ]
+    new-state
+    )
+  )
+
+(def tree-database (insert-map-into-db {} {:path "/Shops/shop0001/cust0001/veh0001/job0001" :job-id "job0001"}))
+(def tree-database2 (insert-map-into-db tree-database  {:path "/Shops/shop0001/cust0001/veh0001/job0002" :job-id "job0002"}))
+(def tree-database3 (insert-map-into-db tree-database2 {:path "/Shops/shop0001/cust0001/veh0001" :make "Ford"}))
+(def tree-database4 (insert-map-into-db tree-database3 {:path "/Shops/shop0001/cust0001/veh0002" :make "VW"}))
+(println "tree-database4:" tree-database4)
+(.log js/console tree-database4)
+(println (s/select [(s/keypath "Shops")(s/keypath "shop0001")] tree-database4))
+
+
 ;; TODO this should be passed a map, we can work out the paths and
 ;; TODO such internally rather than expecting someone else to do the
 ;; TODO work for us.
@@ -99,16 +126,16 @@
 ;; TODO need a tree database, this is a start
 ;; TODO can we build it using process-working-data
 
-(def treedatabase {"Shops"
-                   {"shop0001"
-                    {"veh0001"
-                     {"job0001"
-                      {:path "/Shops/shop0001/veh0001/job0001"}}}}}
-  )
-(.log js/console treedatabase)
+;(def treedatabase {"Shops"
+;                   {"shop0001"
+;                    {"veh0001"
+;                     {"job0001"
+;                      {:path "/Shops/shop0001/veh0001/job0001"}}}}}
+;  )
+;(.log js/console treedatabase)
 
 ;(pprint "treedatabase:" treedatabase)
-(println (s/select [(s/keypath "Shops")(s/keypath "shop0001")] treedatabase))
+;(println (s/select [(s/keypath "Shops")(s/keypath "shop0001")] treedatabase))
 ;(.log js/console (s/select [(s/keypath "Shops")(s/keypath "shop0001")] treedatabase))
 
 ;(println (process-working-data
