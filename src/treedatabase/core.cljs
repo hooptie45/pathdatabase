@@ -94,9 +94,7 @@
 (println (s/select [(s/keypath "Shops")(s/keypath "shop0001")] tree-database4))
 
 
-;; TODO this should be passed a map, we can work out the paths and
-;; TODO such internally rather than expecting someone else to do the
-;; TODO work for us.
+;; TODO this should be passed a list of maps
 (defn process-working-data [initial-map working-data]
   (println "working-data:" working-data)
   (let [list-of-path-segments (:list-of-path-segments working-data)
