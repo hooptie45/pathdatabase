@@ -1,6 +1,7 @@
 (ns ^:figwheel-always treedatabase.core
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [cljs.reader :as reader]
             [cuerdas.core :as str]
             [com.rpl.specter :as s]
             [devtools.core :as devtools]
@@ -115,7 +116,24 @@
 (def results (insert-rows-into-db {} test-data))
 (println "insert-rows-into-db:" results)
 ;(.log js/console (insert-rows-into-db {} test-data))
-;(println (s/select [(s/keypath "Shops")(s/keypath "shop0001")(s/keypath "cust0001")] results))
+
+(println (s/select [(s/keypath "Shops")(s/keypath "shop0001")(s/keypath "cust0001")] results))
+(def param-compiled (s/comp-paths s/keypath s/keypath s/keypath s/keypath s/keypath))
+(defn get-param-compiled [arg results]
+  (let [args (split-path arg)
+        arg0 (nth args 0)
+        arg1 (nth args 1)
+        arg2 (nth args 2)
+        arg3 (nth args 3)
+        arg4 (nth args 4)]
+    (s/select [(param-compiled arg0 arg1 arg2 arg3 arg4)] results)
+    ))
+
+(println "split-path:" (split-path "Shops/shop0001/cust0001/veh0001/job0001"))
+(println "str/split:" (str/split "/Shops/shop0001/cust0001/veh0001/job0001" #"/"))
+;;[(map s/keypath (split-path "/Shops/shop0001/cust0001/veh0001/job0001"))]
+
+(println "param-compiled:" (get-param-compiled "/Shops/shop0001/cust0001/veh0001/job0001" results))
 ;(println "count:" (count results))
 ;(println "first:" (first results))
 ;(println "rest:" (rest results))
