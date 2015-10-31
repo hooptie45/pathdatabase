@@ -114,11 +114,28 @@
 
 ;; TODO we need something other than an empty map to start with
 (def results (insert-rows-into-db {} test-data))
-(println "insert-rows-into-db:" results)
+(println "results:" results)
 ;(.log js/console (insert-rows-into-db {} test-data))
 
-(println (s/select [(s/keypath "Shops")(s/keypath "shop0001")(s/keypath "cust0001")] results))
+(println "split-path:" (split-path "/Shops/shop0001/cust0001/veh0001/job0001"))
+;(.log js/console (split-path "/Shops/shop0001/cust0001/veh0001/job0001"))
+
+(println "str/split:" (str/split "/Shops/shop0001/cust0001/veh0001/job0001" #"/"))
+
+;(println "map:" (map s/keypath (split-path "/Shops/shop0001/cust0001/veh0001/job0001")))
+
+;(println "apply:" (apply s/keypath (split-path "/Shops/shop0001/cust0001/veh0001/job0001")))
+
+;(println "select using map:" (s/select [(map s/keypath (split-path "/Shops/shop0001/cust0001/veh0001/job0001"))] results))
+
+;(println "select using map:" (s/select [(map s/keypath (str/split "/Shops/shop0001/cust0001/veh0001/job0001" #"/"))] results))
+
+;(println "select single path:" (s/select [(s/keypath "/Shops/shop0001/cust0001/veh0001/job0001")] results))
+
+(println "five segments:" (s/select [(s/keypath "Shops")(s/keypath "shop0001")(s/keypath "cust0001")(s/keypath "veh0001")(s/keypath "job0001")] results))
+
 (def param-compiled (s/comp-paths s/keypath s/keypath s/keypath s/keypath s/keypath))
+
 (defn get-param-compiled [arg results]
   (let [args (split-path arg)
         arg0 (nth args 0)
@@ -129,11 +146,9 @@
     (s/select [(param-compiled arg0 arg1 arg2 arg3 arg4)] results)
     ))
 
-(println "split-path:" (split-path "Shops/shop0001/cust0001/veh0001/job0001"))
-(println "str/split:" (str/split "/Shops/shop0001/cust0001/veh0001/job0001" #"/"))
-;;[(map s/keypath (split-path "/Shops/shop0001/cust0001/veh0001/job0001"))]
-
 (println "param-compiled:" (get-param-compiled "/Shops/shop0001/cust0001/veh0001/job0001" results))
+
+
 ;(println "count:" (count results))
 ;(println "first:" (first results))
 ;(println "rest:" (rest results))
